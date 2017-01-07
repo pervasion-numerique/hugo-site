@@ -1,0 +1,113 @@
++++
+date = "2017-01-06T17:13:37"
+title = "Astuce binaire : extraire la valeur d'un bit en C"
+tags = ["bitwise", "tip"]
+math = false
+image = ""
+summary = ""
++++
+:source-highlighter: highlight
+:highlightjs-theme: railscasts
+:tabsize: 3
+:icons: font
+
+Voici une astuce découverte par hasard dans un fichier source de la librairie standard d'Arduino.
+
+<!--more-->
+
+À l'occasion de la préparation d'un cours d'initiation à l'électronique traitant des registres à décalage, je suis tombé sur une astuce de manipulation de bits que je n'avais jamais rencontrée. Celle-ci vise à extraire la valeur d'un bit du contenu d'une variable.
+
+Cette astuce est utilisée dans le code source de la fonction `shiftOut()` disponible dans le fichier `wiring_shift.c` (-> répertoire `Contents/Java/hardware/arduino/avr/cores/arduino` du paquet `Arduino.app` sous Mac OSX). Elle apparaît au niveau de la spécification du 2^ième^ argument des fonctions `digitalWrite()` contenues dans le bloc `if...else...`.
+
+[source,c,options="nowrap"]
+-----
+void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val)
+{
+	uint8_t i;
+
+	for (i = 0; i < 8; i++)  {
+		if (bitOrder == LSBFIRST)
+			digitalWrite(dataPin, !!(val & (1 << i))); 
+			//                    ~~~~~~~~~~~~~~~~~~  
+		else	
+			digitalWrite(dataPin, !!(val & (1 << (7 - i)))); 
+			//                    ~~~~~~~~~~~~~~~~~~~~~~~~
+			
+		digitalWrite(clockPin, HIGH);
+		digitalWrite(clockPin, LOW);		
+	}
+}
+-----
+
+Cette fonction consiste à envoyer sur la broche `dataPin` de l'Arduino et les unes après les autres, les valeurs des 8 bits d'un octet `val` (on parle aussi de *sérialisation* de l'octet). L'ordre dans lequel les bits sont envoyés est déterminé par le paramètre `bitOrder` (`LSBFIRST` -> bit de poids faible en 1^ier^). Chaque envoi de bit sur la broche `dataPin` est enfin signalé par l'émission d'une impulsion sur la broche `clockPin`.
+
+Le schéma ci-dessous illustre un cas typique d'utilisation de cette fonction dans un montage qui commande simultanément les 8 broches d'entrée d'un afficheur 7 segments en ne mobilisant que 2 broches de l'Arduino. La broche `dataPin` de l'Arduino (signal `SDI` sur le schéma) est reliée à la broche `DS` du registre à décalage référencé http://www.nxp.com/documents/data_sheet/74HC_HCT595.pdf[74HC595] qui est utilisé ici dans le mode _Serial IN - Parallel OUT_. La broche `clockPin` (signal `SCLK` sur le schéma) est quant à elle reliée à la broche `SH_CP` de ce même composant.
+
+[NOTE]
+=====
+En réalité, une 3^ième^ broche de l'Arduino est utilisée. Celle-ci est nommée LATCH sur le schéma mais vu qu'elle ne sert pas pour le processus de (dé)sérialisation de l'octet, elle n'est pas comptabilisée.
+=====
+
+image::/img/20170106/schema_74hc595.png[width=800, align=center, link=/img/20170106/schema_74hc595.png]
+
+Mais, revenons à l'astuce en question...
+
+Dans le 1^ier^ `digitalWrite()`, le 2^ième^ argument est spécifié par l'expression `!!(val & (1 << i)`. Celle-ci permet de déterminer la valeur du bit de rang `i` de l'octet `val` à générer sur la broche `dataPin`.
+
+Cette expression m'a un peu intrigué au départ car elle fait usage à la fois d'opérateurs de logique booléenne et d'opérateurs agissant sur des bits (_bitwise operators_ en anglais ou "`opérateurs bit à bit`" en français). Le `!` correspond ainsi à la négation de l'algèbre de Boole tandis que le `&` et le `<<` correspondent respectivement aux opérations bit à bit du ET et du décalage à gauche.
+
+Or, faire intervenir des opérateurs à ce point différents dans le cadre d'une même expression suscite toujours chez moi de la défiance.
+
+Avant de décomposer cette expression sur un cas concret afin de "`démontrer`" le bien fondé de l'astuce, rappelons comment, au niveau du langage C, les valeurs de vérité des propositions booléennes sont déterminées :
+
+* sont considérées comme FAUSSES les expressions dont l'évaluation donne 0 ;
+* sont considérées comme VRAIES les expressions dont l'évaluation donne un nombre *différent de 0*.
+
+Dnas le cadre de la démonstration, considérons que `val` contient la valeur binaire `10100101` et que la valeur décimale de `i` est `2`.
+
+L'évaluation de `(1<<i)` mène à la valeur binaire `00000100` (1 décalé de 2 positions vers la gauche).
+
+L'évaluation de `(val & (1 << i)`, qui correspond à une opération dîte de *masquage*, mène également à la valeur binaire `00000100` ou `4` en décimal. En effet :
+
+----
+   10100101
+ & 00000100
+ ----------
+   00000100
+----
+
+La suite de l'évaluation portant sur la double négation est plus délicate. En effet, la négation de la valeur `4`, c'est-à-dire VRAI dans un contexte booléen, va bien nous donner 0 (-> FAUX) et la négation de ce résultat va nous donner VRAI. Cependant, qu'est-ce qui nous garantit que la valeur numérique de ce VRAI sera le `1` attendu puisqu'en C le VRAI n'est qu'un nombre différent de 0 ?
+
+Je pense avoir trouvé la réponse dans le paragraphe *6.5.3.3 Unary arithmetic operators* de la http://www.open-std.org/jtc1/sc22/WG14/www/docs/n1256.pdf[norme ISO/IEC 9899:TC3] qui spécifie le langage C dans sa version C99.
+
+[quote,ISO/IEC 9899:TC3 - Programming languages - C]
+_____
+The result of the logical negation operator ! is 0 if the value of its operand compares unequal to 0, 1 *if the value of its operand compares equal to 0*. The result has type int. The expression !E is equivalent to (0==E).
+_____
+
+Conformément à ce que dit la norme dans la dernière partie de la 1^ière^ phrase, le résultat final de l'évaluation de l'ensemble de l'expression de notre exemple donnera donc bien la valeur attendue, c'est-à-dire `1`, pour le bit de rang 2 de `val` (i.e. le 3^ième^ bit en partant de la droite) . En effet, `!!(val & (1 << i) = !!(4) = !(!(4)) = !(0) = 1`.
+
+Afin d'être complet, considérons à présent un bit à 0 dans l'octet `val` en prenant `i = 4`. L'évaluation de `(val & (1 << i)` mène cette fois à la valeur binaire `00000000` ou simplement `0` en décimal. En effet :
+
+----
+   10100101
+ & 00010000
+ ----------
+   00000000
+----
+
+L'ensemble de l'expression nous donne bien `0`. En effet, `!!(val & (1 << i) = !!(0) = !(!(0)) = !(1) = 0`.
+
+
+== Conclusion 
+
+L'accès aux bits d'une valeur numérique devient inévitable au fur et à mesure que l'on se rapproche du matériel (interprétation de la valeur d'un registre de composant programmable, analyse d'une trame de communication...). De nombreuses techniques utilisant les opérateurs bit à bit du langage C existent (voir par exemple l'incontournable article : https://graphics.stanford.edu/~seander/bithacks.html["Bit Twiddling Hacks"]). Cependant, malgré sa simplicité apparente, l'astuce vue dans ce billet m'a intrigué la 1^ière^ fois que je l'ai rencontrée dans la mesure où son expression considérait tour à tour ses opérandes comme des valeurs numériques puis booléennes pour enfin aboutir à une valeur numérique. 
+
+Dans l'éventualité où certains auraient été surpris comme moi par l'expression de cette astuce, j'espère avoir apporté une réponse satisfaisante.
+
+[cols="^",frame="none",grid="none"]
+|=====
+| [red]#icon:power-off[2x]#
+|=====
+
+ 

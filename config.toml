@@ -6,7 +6,7 @@ enableEmoji = true
 footnotereturnlinkcontents = "<sup>^</sup>"
 
 # Enable comments by entering your Disqus shortname
-disqusShortname = ""
+disqusShortname = "infores-sn"
 
 # Enable analytics by entering your Google Analytics tracking ID
 googleAnalytics = ""
@@ -23,7 +23,7 @@ defaultContentLanguageInSubdir = false
   # role = "Enseignant en BTS Systèmes numériques - option : Informatique & Réseaux"
   organization = "Lycée Alphonse Benoît"
   avatar = "portrait.jpg"
-  email = "claude-stephane.defrance@ac-aix-marseille.fr"
+  email = "infores.sn@gmail.com"
   address = "Lycée Alphonse Benoît, cours Victor Hugo, 84800 L'Isle-sur-la-Sorgue, France"
   # office_hours = "Monday 10:00 to 13:00 or email for appointment"
   # phone = "888 888 88 88"
@@ -71,7 +71,7 @@ defaultContentLanguageInSubdir = false
   [[params.social]]
     icon = "envelope"
     icon_pack = "fa"
-    link = "mailto:claude-stephane.defrance@ac-aix-marseille.fr"
+    link = "mailto:infores.sn@gmail.com"
 
   [[params.social]]
     icon = "github"
