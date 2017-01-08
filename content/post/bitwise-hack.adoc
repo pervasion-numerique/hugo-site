@@ -7,9 +7,10 @@ image = ""
 summary = ""
 +++
 :source-highlighter: highlight
-:highlightjs-theme: railscasts
+//:highlightjs-theme: railscasts
 :tabsize: 3
 :icons: font
+:prewrap!:
 
 Voici une astuce découverte par hasard dans un fichier source de la librairie standard d'Arduino.
 
@@ -19,7 +20,7 @@ Voici une astuce découverte par hasard dans un fichier source de la librairie s
 
 Cette astuce est utilisée dans le code source de la fonction `shiftOut()` disponible dans le fichier `wiring_shift.c` (-> répertoire `Contents/Java/hardware/arduino/avr/cores/arduino` du paquet `Arduino.app` sous Mac OSX). Elle apparaît au niveau de la spécification du 2^ième^ argument des fonctions `digitalWrite()` contenues dans le bloc `if...else...`.
 
-[source,c,options="nowrap"]
+[source,c]
 -----
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val)
 {
@@ -41,7 +42,7 @@ void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val)
 
 Cette fonction consiste à envoyer sur la broche `dataPin` de l'Arduino et les unes après les autres, les valeurs des 8 bits d'un octet `val` (on parle aussi de *sérialisation* de l'octet). L'ordre dans lequel les bits sont envoyés est déterminé par le paramètre `bitOrder` (`LSBFIRST` -> bit de poids faible en 1^ier^). Chaque envoi de bit sur la broche `dataPin` est enfin signalé par l'émission d'une impulsion sur la broche `clockPin`.
 
-Le schéma ci-dessous illustre un cas typique d'utilisation de cette fonction dans un montage qui commande simultanément les 8 broches d'entrée d'un afficheur 7 segments en ne mobilisant que 2 broches de l'Arduino. La broche `dataPin` de l'Arduino (signal `SDI` sur le schéma) est reliée à la broche `DS` du registre à décalage référencé http://www.nxp.com/documents/data_sheet/74HC_HCT595.pdf[74HC595] qui est utilisé ici dans le mode _Serial IN - Parallel OUT_. La broche `clockPin` (signal `SCLK` sur le schéma) est quant à elle reliée à la broche `SH_CP` de ce même composant.
+Le schéma ci-dessous illustre un cas typique d'utilisation de la fonction `shiftOut()` dans un montage à base d'un registre à décalage http://www.nxp.com/documents/data_sheet/74HC_HCT595.pdf[74HC595] configuré ici en mode  _Serial IN - Parallel OUT_. Celui-ci commande simultanément les 8 broches d'entrée d'un afficheur 7 segments (signaux `A` à `H` sur le schéma) à partir des informations que l'Arduino lui fournit à travers uniquement 2 broches (`DS` pour les bits de l'octet sérialisé et `SH_CP` pour l'impulsion signalant leur mise à disposition). L'appel à un composant externe permet ainsi de libérer 6 broches sur l'Arduino pour un autre usage. 
 
 [NOTE]
 =====
@@ -56,14 +57,14 @@ Dans le 1^ier^ `digitalWrite()`, le 2^ième^ argument est spécifié par l'expre
 
 Cette expression m'a un peu intrigué au départ car elle fait usage à la fois d'opérateurs de logique booléenne et d'opérateurs agissant sur des bits (_bitwise operators_ en anglais ou "`opérateurs bit à bit`" en français). Le `!` correspond ainsi à la négation de l'algèbre de Boole tandis que le `&` et le `<<` correspondent respectivement aux opérations bit à bit du ET et du décalage à gauche.
 
-Or, faire intervenir des opérateurs à ce point différents dans le cadre d'une même expression suscite toujours chez moi de la défiance.
+Faire intervenir des opérateurs à ce point différents dans le cadre d'une même expression doit toujours, à mon sens, susciter la défiance.
 
 Avant de décomposer cette expression sur un cas concret afin de "`démontrer`" le bien fondé de l'astuce, rappelons comment, au niveau du langage C, les valeurs de vérité des propositions booléennes sont déterminées :
 
 * sont considérées comme FAUSSES les expressions dont l'évaluation donne 0 ;
 * sont considérées comme VRAIES les expressions dont l'évaluation donne un nombre *différent de 0*.
 
-Dnas le cadre de la démonstration, considérons que `val` contient la valeur binaire `10100101` et que la valeur décimale de `i` est `2`.
+Dans le cadre de la démonstration, considérons que `val` contient la valeur binaire `10100101` et que la valeur décimale de `i` est `2`.
 
 L'évaluation de `(1<<i)` mène à la valeur binaire `00000100` (1 décalé de 2 positions vers la gauche).
 
@@ -101,9 +102,11 @@ L'ensemble de l'expression nous donne bien `0`. En effet, `!!(val & (1 << i) = !
 
 == Conclusion 
 
-L'accès aux bits d'une valeur numérique devient inévitable au fur et à mesure que l'on se rapproche du matériel (interprétation de la valeur d'un registre de composant programmable, analyse d'une trame de communication...). De nombreuses techniques utilisant les opérateurs bit à bit du langage C existent (voir par exemple l'incontournable article : https://graphics.stanford.edu/~seander/bithacks.html["Bit Twiddling Hacks"]). Cependant, malgré sa simplicité apparente, l'astuce vue dans ce billet m'a intrigué la 1^ière^ fois que je l'ai rencontrée dans la mesure où son expression considérait tour à tour ses opérandes comme des valeurs numériques puis booléennes pour enfin aboutir à une valeur numérique. 
+La manipulation de valeurs numériques au niveau du bit devient inévitable au fur et à mesure que l'on se rapproche du matériel (interprétation de la valeur d'un registre de composant programmable, analyse d'une trame de communication...). De nombreuses techniques en langage C existent (voir par exemple https://community.embarcadero.com/article/technical-articles/149-tools/14514-bit-twiddling["`Bit Twiddling`"] ou l'incontournable https://graphics.stanford.edu/~seander/bithacks.html["Bit Twiddling Hacks"]). 
 
-Dans l'éventualité où certains auraient été surpris comme moi par l'expression de cette astuce, j'espère avoir apporté une réponse satisfaisante.
+Malgré sa simplicité apparente, l'astuce vue dans ce billet m'a intrigué la 1^ière^ fois que je l'ai rencontrée dans la mesure où son expression considérait tour à tour ses opérandes comme des valeurs numériques puis booléennes pour enfin aboutir à une valeur numérique. 
+
+Dans l'éventualité où certains se seraient posés la même question que moi face à l'expression en langage C de cette technique de manipulation de bits, j'espère leur avoir apporté une explication satisfaisante.
 
 [cols="^",frame="none",grid="none"]
 |=====

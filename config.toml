@@ -1,4 +1,4 @@
-baseurl = "https://infores-sn.github.io"
+baseurl = "https://infores-sn.github.io/"
 title = "{Pervasion} numérique"
 copyright = "&copy; 2016 Claude Defrance"
 theme = "academic"
@@ -17,6 +17,11 @@ defaultContentLanguageInSubdir = false
 
 [blackfriday]
   hrefTargetBlank = true
+
+[taxonomies]
+tag = "tags"
+category = "categories"
+series = "series"
 
 [params]
   name = "Claude Defrance"
@@ -46,7 +51,7 @@ defaultContentLanguageInSubdir = false
 
   # Link custom CSS and JS assets
   #   (relative to /static/css and /static/js respectively)
-  custom_css = []
+  custom_css = ["infores-sn.css"]
   custom_js  = []
 
 

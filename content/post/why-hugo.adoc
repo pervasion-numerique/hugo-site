@@ -8,6 +8,7 @@ summary = ""
 +++
 :tabsize: 3
 :icons: font
+:prewrap!:
 
 https://gohugo.io[`HUGO`] est un outil logiciel développé avec le https://golang.org[langage Go] de Google et qui permet d'élaborer de manière assez simple des sites web *statiques* comme celui que vous êtes en train de consulter.
 
