@@ -108,9 +108,9 @@ Malgré sa simplicité apparente, l'astuce vue dans ce billet m'a intrigué la 1
 
 Dans l'éventualité où certains se seraient posés la même question que moi face à l'expression en langage C de cette technique de manipulation de bits, j'espère leur avoir apporté une explication satisfaisante.
 
-[cols="^",frame="none",grid="none"]
+[cols="^",frame="none",options="header"]
 |=====
-| [red]#icon:power-off[2x]#
+|[red]#icon:power-off[2x]#
 |=====
 
  

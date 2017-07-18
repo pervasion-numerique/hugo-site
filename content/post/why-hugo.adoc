@@ -166,9 +166,8 @@ Malgré un numéro de version (v0.18 à l'écriture de ces lignes) qui trahit sa
 
 Dans l'éventualité où `HUGO` périclite ou ne me satisfait plus, le contenu du site étant constitué de simple fichiers texte, il me sera de toute façon toujours possible de récupérer facilement l'information utile pour l'exploiter autrement.
 
-[cols="^",frame="none",grid="none"]
+[cols="^",frame="none",options="header"]
 |=====
-| [red]#icon:power-off[2x]#
+|[red]#icon:power-off[2x]#
 |=====
-
  
