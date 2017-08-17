@@ -29,7 +29,7 @@ paginate = 10
 paginatePath = "page"
 
 # Enable comments by entering your Disqus shortname
-disqusShortname = "infores-sn"
+disqusShortname = "claude_defrance"
 
 [permalinks]
 post = "/:year/:month/:day/:slug/"
@@ -52,7 +52,7 @@ name = "default"
 
 [params.popover]
 # This is a highly configurable popover form.
-enablepopover = true #enable or disable popover: true/false.
+enablepopover = false #enable or disable popover: true/false.
 posturl = "https://zapier.com/hooks/catch/1227563/" # Your zapier post hook.
 headerimage = "//placehold.it/1000x600"
 expirecookie = 5 #show it again after number of days to visitors that has not subscribed.
@@ -76,7 +76,7 @@ switchlang = false
 BrandImage = "/img/logo.png" #top header brand image.
 brand = "{Pervasion} numérique" # brand image alt text.
 topline = "few words about your site"
-footline = "_Propulsé par HUGO <br /> et le thème hugo-bootstrap-premium_"
+footline = "Propulsé par [hugo](http://gohugo.io/) et un thème adapté de [hugo-bootstrap-premium](https://github.com/appernetic/hugo-bootstrap-premium/)"
 
 customJS = []
 customCSS = ["./css/style_custom.css"]

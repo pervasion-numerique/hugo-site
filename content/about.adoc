@@ -5,22 +5,30 @@ menu = "main"
 +++
 :icons: font
 
-L'objectif de ce site est de proposer du contenu en rapport avec mon activité d'enseignant dans la spécialité **Informatique & Réseaux** du **BTS Systèmes Numériques**.
+L'objectif de ce site est de proposer du contenu en rapport avec mon activité d'enseignant en **BTS Systèmes Numériques**.
 
-Cette spécialité aborde les thèmes des réseaux et de leur sécurité, des systèmes embarqués, du _cloud computing_ et de la programmation des systèmes.
+Cette formation dispose de 2 spécialités :
 
-Ce site représente un moyen de centraliser puis de partager des ressources et des informations qui m'ont servi ou qui m'ont simplement intéressé à un moment ou à un autre dans le cadre de mon activité.
+. Informatique & Réseaux
+. Électronique & Communications
+
+La 1^ère^ aborde les thèmes des réseaux et de leur sécurité, des systèmes embarqués, du _cloud computing_ et de la programmation des systèmes.
+
+La 2^ème^ traite de la commande rapprochée, de l’usage des composants complexes, de la pré-industrialisation des dispositifs électroniques, de leur maintenance, et de la mobilisation des moyens de télécommunication dans les couches de bas niveau.
+
+Ce site représente un moyen de centraliser puis de partager des retours d'expérience, ressources et informations sur des domaines techniques en rapport avec mon activité.
 
 Bonne lecture...  
 
 [NOTE]
-.À propos du terme "Pervasion"
+.À propos du terme "`Pervasion`"
 =====
-En premier lieu, il faut savoir qu'il ne fait pas partie de la langue française. C'est un néologisme qui viendrait de l'anglais _pervasive_ qui pourrait se traduire par "omniprésent"
+En premier lieu, il faut savoir qu'il ne fait pas partie de la langue française. C'est un néologisme qui viendrait de l'anglais _pervasive_ qui pourrait se traduire par "`omniprésent`"
 
-Les mauvaises langues pourraient dire qu'il constitue aussi une contraction de *__perv__erse* et *in__vasion__* icon:smile-o[]
+Les mauvaises langues pourraient dire qu'il constitue aussi une contraction de *__perv__erse* et *in__vasion__* avec la connotation négative que véhicule cette interprétation.
 
-Cependant, quelle que soit la signification qu'on lui accorde, le résultat est le même : le numérique est partout autour de nous, pour le meilleur ou pour le pire...
+Cependant, quelle que soit la signification qu'on accorde à "`Pervasion`", le constat est le même :
+le numérique est bel et bien partout autour de nous, pour le meilleur ... ou pour le pire icon:smile-o[].
 =====
 
 [cols="^",frame="none",options="header"]
